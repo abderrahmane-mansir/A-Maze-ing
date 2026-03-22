@@ -37,19 +37,15 @@ make debug
 make clean
 ```
 
-```bash
-make debug
-```
-
 ## 🎮 Controls
             ┌────────────────────────────────┐
-            |────────────────────────────────|
             |           key maping           |
+            |────────────────────────────────|
             |   r    : change color      🎨  |
-            |   g    : generate maze     ₪   |
+            |   g    : generate maze     ⚙️  |
             |   s    : show / hide path  🧭  |
             |   p    : player mode       🎮  |
             |   c    : change character  👥  |
-            |   t    : show / hide track 🗺️   |
+            |   t    : show / hide track 🗺️  |
             |   q    : Quit              🚫  |
             └────────────────────────────────┘
