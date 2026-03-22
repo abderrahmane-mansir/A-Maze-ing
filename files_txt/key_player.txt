@@ -3,7 +3,7 @@
             |           key maping           |
             |────────────────────────────────|
             |   r    : change color      🎨  |
-            |   g    : generate maze     ₪   |
+            |   g    : generate maze     ⚙️  |
             |   s    : show / hide path  🧭  |
             |   ⬆⬇⬅➡ : move player       🕹️   |
             |   c    : change character  👥  |
