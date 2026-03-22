@@ -1,8 +1,5 @@
-from blessed import Terminal
 from typing import List, Tuple, Callable
-
-term = Terminal()
-
+import sys
 
 def parsing() -> Tuple[int, int, Tuple[int, int], Tuple[int, int]]:
     """
@@ -18,7 +15,7 @@ def parsing() -> Tuple[int, int, Tuple[int, int], Tuple[int, int]]:
     width = 0
     height = 0
 
-    with open("config.txt") as f:
+    with open(sys.argv[1]) as f:
         i = 0
         for line in f:
             key, value = line.split("=", 1)
@@ -95,7 +92,6 @@ def draw_grid(
     """
     Render the game grid in the terminal.
     """
-    print(term.clear)
 
     lines: List[str] = []
     cells_42 = cells_of_42(width, height)
