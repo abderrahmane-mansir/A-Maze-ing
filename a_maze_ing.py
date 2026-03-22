@@ -5,7 +5,7 @@ This module validates configuration values and
 starts the game drawing loop.
 """
 import sys
-
+import os
 try:
     from parsing import parsing
     from drawing import drawing
@@ -16,6 +16,7 @@ except ModuleNotFoundError:
     sys.exit(1)
 
 
+os.system("clear")
 def main() -> None:
     """
     Validate configuration values from the config file.
