@@ -134,7 +134,7 @@ def drawing() -> None:
                 flush=True,
             )
             print(
-                term.move_yx(height * 2 + 3, 0)
+                term.move_yx(height * 2 + 2, 0)
                 + term.white(f"move counter: {count_move}"),
                 flush=True,
             )

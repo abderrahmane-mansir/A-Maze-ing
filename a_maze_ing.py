@@ -58,7 +58,7 @@ if __name__ == "__main__":
         main()
         drawing()
     except KeyboardInterrupt:
-        print("\nGame exited by user.")
+        print("Game exited by user.")
         sys.exit(0)
     except Exception as e:
         print(f"Unexpected error: {e}")
