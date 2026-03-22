@@ -139,7 +139,7 @@ Several parts of the project are reusable:
 
 ## 👥 Team & Project Management
 
-### 👤 **amnsir**
+### 👤 **amansir**
   - Maze generation implementation
   - Game logic (movement, collision)
 ### 👤 **nodoulah**
