@@ -17,6 +17,8 @@ except ModuleNotFoundError:
 
 
 os.system("clear")
+
+
 def main() -> None:
     """
     Validate configuration values from the config file.

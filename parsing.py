@@ -1,6 +1,7 @@
 from typing import List, Tuple, Callable
 import sys
 
+
 def parsing() -> Tuple[int, int, Tuple[int, int], Tuple[int, int]]:
     """
     Parse configuration values from the config.txt file.

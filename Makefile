@@ -1,7 +1,7 @@
 run:
 	@python3 a_maze_ing.py config.txt
 install:
-	@pip install blessed pygame
+	@pip install blessed pygame flake8 mypy
 debug:
 	@python3 -m pdb a_maze_ing
 clean:
