@@ -21,15 +21,12 @@ target: List[str] = ["  🚪 ", "  ⛽ "]
 tracker: List[str] = ["  👣 ", "  💨 "]
 move_path: str = "  ⭐ "
 
-
+pygame.mixer.init()
 def playsound(sound: str) -> None:
     """Play a sound asynchronously using pygame."""
     try:
-        if not pygame.mixer.get_init():
-            pygame.mixer.init()
-        pygame.mixer.music.load(sound)
-        pygame.mixer.music.play()
-    except (pygame.error, FileNotFoundError):
+        pygame.mixer.Sound(sound).play()
+    except:
         pass
 
 
@@ -152,12 +149,12 @@ def draw_minimap(
     start_y: int,
     start_x: int,
 ) -> None:
-    """Draw a small minimap on the right side."""
+    """Draw a small mini map on the right side."""
     height = len(grid)
     width = len(grid[0]) if grid else 0
     blocked_42 = set(cells_of_42_from_grid(grid))
 
-    lines: list[str] = ["MINIMAP"]
+    lines: list[str] = ["MINI MAP"]
 
     for y in range(height):
         row = ""
@@ -253,6 +250,7 @@ def animate_solver(
         )
 
         time.sleep(0.08)
+        start_sound("./sound/pop.mp3")
 
 i: int = 0
 def drawing(
@@ -316,7 +314,7 @@ def drawing(
                 characters=characters[char_index],
                 target=target[target_index],
                 tracker=tracker[tracker_index],
-                track=list(track_set) if show_track else [],
+                track=track if show_track else [],
                 path=path,
                 show_path=show_path,
                 move_path=move_path,
@@ -346,7 +344,7 @@ def drawing(
             print(
                 term.move_yx(height * 2 + 2, 0)
                 + term.white(
-                    f"health: {health_count}/3 | minimap: {'on' if show_minimap else 'off'} | bomb mode: {'on' if dynamic_mode else 'off'} | bombs: {len(bombs)}"
+                    f"health: {health_count}/3 | mini map: {'on' if show_minimap else 'off'} | bomb mode: {'on' if dynamic_mode else 'off'} | bombs: {len(bombs)}"
                 ),
                 flush=True,
             )
@@ -354,9 +352,8 @@ def drawing(
             key = term.inkey()
             x, y = player
 
-            if player not in track_set:
-                track.append(player)
-                track_set.add(player)
+            track.append(player)
+            track_set.add(player)
 
             if key == "q":
                 os.system("clear")
@@ -406,6 +403,7 @@ def drawing(
                     bombs.clear()
 
             elif key == "s":
+                bombs.clear()
                 if not show_path:
                     animated_path = remaining_path(path, player)
                     animate_solver(
@@ -419,7 +417,7 @@ def drawing(
                         characters_skin=characters[char_index],
                         target_skin=target[target_index],
                         tracker_skin=tracker[tracker_index],
-                        track=list(track_set) if show_track else [],
+                        track=track if show_track else [],
                         path=animated_path,
                         menu_text=menu_text,
                         count_move=count_move,
@@ -427,6 +425,7 @@ def drawing(
                         health_text=f"health: {health_count}/3 | bombs: {len(bombs)}",
                         show_minimap=show_minimap
                     )
+                    start_sound("./sound/victory.mp3")
                     show_path = True
                 else:
                     show_path = False
@@ -448,7 +447,10 @@ def drawing(
                     start_sound("./sound/spongebob-walking-sound-single.mp3")
                     x, y = new_x, new_y
                     count_move += 1
-
+                    if (x, y) in path:
+                        path.remove((x, y))
+                    track.append((x, y))
+                    track_set.add((x, y))
                     if dynamic_mode and count_move % 5 == 0:
                         bomb = spawn_random_bomb(
                             width=width,
@@ -461,7 +463,7 @@ def drawing(
                         )
                         if bomb is not None:
                             bombs.add(bomb)
-                            start_sound("./sound/duck-toy-sound.mp3")
+                            start_sound("./sound/bomb.mp3")
 
                 if (x, y) in bombs:
                     bombs.remove((x, y))
@@ -470,23 +472,10 @@ def drawing(
                     track = [(x, y)]
                     track_set = {(x, y)}
                     count_move = 0
-                    health_count -= 3
+                    health_count -= 1
                     time.sleep(0.3)
 
-                if (
-                    (x, y) in blocked_42
-                    and (x, y) != end
-                    and (x, y) != (save_x, save_y)
-                ):
-                    x, y = save_x, save_y
-                    track = [(x, y)]
-                    track_set = {(x, y)}
-                    start_sound("./sound/ack.mp3")
-                    health_count -= 3
-                    count_move = 0
-                    time.sleep(0.3)
-
-            if health_count <= 0:
+            if health_count == 0:
                 os.system("clear")
                 game_over_text = safe_read("./files_txt/game_over.txt")
                 print(term.red(game_over_text.strip()))

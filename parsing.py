@@ -67,6 +67,10 @@ def parsing() -> tuple[
                 elif key == "OUTPUT_FILE":
                     output_file = value
                 elif key == "PERFECT":
+                    perfect = value.lower()
+                    if perfect != "true" and  perfect != "false":
+                        print("Error: missing required perfect keys")
+                        raise SystemExit(1)
                     perfect = value.lower() == "true"
                 elif key == "SEED":
                     seed = int(value)
@@ -84,6 +88,7 @@ def parsing() -> tuple[
     if width is None or height is None or start is None or end is None:
         print("Error: missing required config keys")
         raise SystemExit(1)
+    
 
     return width, height, start, end, output_file, perfect, seed
 
@@ -148,10 +153,7 @@ def draw_grid(
                 middle_line += move_path
                 count += 1
             elif (x, y) in track:
-                if track and (x, y) == track[-1]:
-                    middle_line += move_path
-                else:
-                    middle_line += tracker
+                middle_line += tracker
             else:
                 middle_line += "     "
 
