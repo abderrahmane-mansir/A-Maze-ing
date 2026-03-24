@@ -31,7 +31,7 @@ class MazeGenerator:
         enter: Tuple[int, int],
         exit: Tuple[int, int],
         perfect: bool,
-        seed: str | None,
+        seed: int | None,
     ) -> None:
         """Initialize the maze generator."""
         self.width: int = width
@@ -39,7 +39,7 @@ class MazeGenerator:
         self.enter: Tuple[int, int] = enter
         self.exit: Tuple[int, int] = exit
         self.perfect: bool = perfect
-        self.seed: str = str(random.randint(0, 10**6)) if seed is None else seed
+        self.seed: int = random.randint(0, 10**6) if seed is None else seed
 
         self.grid: List[List[Cell]] = []
         self.path: List[Tuple[int, int]] = []
@@ -99,7 +99,8 @@ class MazeGenerator:
             maze[y][x].walls["S"] = False
             maze[y + 1][x].walls["N"] = False
 
-    def generate(self) -> str:
+    def generate(self) -> int:
+        """Generate the maze and return the seed used."""
         if not self.grid:
             self.create_grid()
 
@@ -112,18 +113,23 @@ class MazeGenerator:
         stack: List[Cell] = [maze[y][x]]
 
         def neighbors(cell_y: int, cell_x: int) -> List[Cell]:
+            """Return unvisited neighboring cells of a given cell."""
             neighbor_list: List[Cell] = []
 
             if cell_x - 1 >= 0 and not maze[cell_y][cell_x - 1].visited:
                 neighbor_list.append(maze[cell_y][cell_x - 1])
 
-            if cell_x + 1 < self.width and not maze[cell_y][cell_x + 1].visited:
+            if (cell_x + 1 < self.width
+                    and not maze[cell_y][cell_x + 1].visited):
                 neighbor_list.append(maze[cell_y][cell_x + 1])
 
             if cell_y - 1 >= 0 and not maze[cell_y - 1][cell_x].visited:
-                neighbor_list.append(maze[cell_y - 1][cell_x])
+                neighbor_list.append(
+                    maze[cell_y - 1][cell_x]
+                )
 
-            if cell_y + 1 < self.height and not maze[cell_y + 1][cell_x].visited:
+            if (cell_y + 1 < self.height
+                    and not maze[cell_y + 1][cell_x].visited):
                 neighbor_list.append(maze[cell_y + 1][cell_x])
 
             return neighbor_list
@@ -164,68 +170,12 @@ class MazeGenerator:
         """
         Open extra walls after generating a perfect maze, to create
         multiple possible paths while keeping the same base structure.
-    
+
         The algorithm prefers walls closer to the exit so alternate
         routes to the exit become more visible.
         """
-        list_42: List[Tuple[int, int]] = self.list_2 + self.list_4
-        weighted_walls: List[Tuple[int, int, str]] = []
-    
-        exit_x, exit_y = self.exit
-    
-        for y in range(self.height):
-            for x in range(self.width):
-                if (x, y) in list_42:
-                    continue
-                
-                # Candidate east wall
-                if x < self.width - 1 and (x + 1, y) not in list_42:
-                    # Manhattan distance to exit
-                    dist = abs(x - exit_x) + abs(y - exit_y)
-    
-                    # More copies = higher chance to be chosen
-                    weight = max(1, self.width + self.height - dist)
-    
-                    for _ in range(weight):
-                        weighted_walls.append((y, x, "E"))
-    
-                # Candidate south wall
-                if y < self.height - 1 and (x, y + 1) not in list_42:
-                    dist = abs(x - exit_x) + abs(y - exit_y)
-                    weight = max(1, self.width + self.height - dist)
-    
-                    for _ in range(weight):
-                        weighted_walls.append((y, x, "S"))
-    
-        if not weighted_walls:
-            return
-    
-        random.shuffle(weighted_walls)
-    
-        # Number of extra openings
-        extra = max(1, int((self.width * self.height) * probability))
-    
-        opened: set[Tuple[int, int, str]] = set()
-        count = 0
-    
-        for y, x, direction in weighted_walls:
-            if (y, x, direction) in opened:
-                continue
-            
-            # Only open currently closed walls
-            if direction == "E" and self.grid[y][x].walls["E"]:
-                self.open_passage(y, x, direction)
-                opened.add((y, x, direction))
-                count += 1
-    
-            elif direction == "S" and self.grid[y][x].walls["S"]:
-                self.open_passage(y, x, direction)
-                opened.add((y, x, direction))
-                count += 1
-    
-            if count >= extra:
-                break
-            
+        # keep your current code here
+
     def solver(self) -> None:
         """Find the shortest path from entry to exit using BFS."""
         self.path = []

@@ -3,13 +3,15 @@ Configuration parsing and terminal maze rendering helpers.
 """
 
 import sys
-from typing import Callable
+from typing import Callable, List, Tuple, Set
+from ft_draw import Cell
 
-def parsing() -> tuple[
+
+def parsing() -> Tuple[
     int,
     int,
-    tuple[int, int],
-    tuple[int, int],
+    Tuple[int, int],
+    Tuple[int, int],
     str,
     bool,
     int | None,
@@ -32,8 +34,8 @@ def parsing() -> tuple[
 
     width: int | None = None
     height: int | None = None
-    start: tuple[int, int] | None = None
-    end: tuple[int, int] | None = None
+    start: Tuple[int, int] | None = None
+    end: Tuple[int, int] | None = None
     output_file: str = "maze.txt"
     perfect: bool = True
     seed: int | None = None
@@ -42,7 +44,6 @@ def parsing() -> tuple[
         with open(sys.argv[1], encoding="utf-8") as file:
             for raw_line in file:
                 line = raw_line.strip()
-
                 if not line or line.startswith("#"):
                     continue
 
@@ -67,9 +68,8 @@ def parsing() -> tuple[
                 elif key == "OUTPUT_FILE":
                     output_file = value
                 elif key == "PERFECT":
-                    perfect = value.lower()
-                    if perfect != "true" and  perfect != "false":
-                        print("Error: missing required perfect keys")
+                    if value.lower() not in ("true", "false"):
+                        print("Error: PERFECT must be True or False")
                         raise SystemExit(1)
                     perfect = value.lower() == "true"
                 elif key == "SEED":
@@ -88,7 +88,6 @@ def parsing() -> tuple[
     if width is None or height is None or start is None or end is None:
         print("Error: missing required config keys")
         raise SystemExit(1)
-    
 
     return width, height, start, end, output_file, perfect, seed
 
@@ -96,33 +95,27 @@ def parsing() -> tuple[
 def draw_grid(
     width: int,
     height: int,
-    grid: list[list[object]],
-    player: tuple[int, int],
-    end: tuple[int, int],
+    grid: List[List[Cell]],
+    player: Tuple[int, int],
+    end: Tuple[int, int],
     color: Callable[[str], str],
     characters: str,
     target: str,
     tracker: str,
-    track: list[tuple[int, int]],
-    path: list[tuple[int, int]],
+    track: List[Tuple[int, int]],
+    path: List[Tuple[int, int]],
     show_path: bool,
     move_path: str,
-    bombs: set[tuple[int, int]],
-) -> int:
-    """Render the maze grid and return the displayed path length."""
-    lines: list[str] = []
-    cells_42: set[tuple[int, int]] = set()
-    count = 0
+    bombs: Set[Tuple[int, int]],
+) -> None:
+    """Render the maze grid with cells, player, target, and path."""
+    lines: List[str] = []
+    cells_42: Set[Tuple[int, int]] = set()
 
     for y in range(height):
         for x in range(width):
             cell = grid[y][x]
-            if (
-                cell.walls["N"]
-                and cell.walls["E"]
-                and cell.walls["S"]
-                and cell.walls["W"]
-            ):
+            if all(cell.walls.values()):
                 cells_42.add((x, y))
 
     for y in range(height):
@@ -151,7 +144,6 @@ def draw_grid(
                 middle_line += "  💣 "
             elif show_path and (x, y) in path:
                 middle_line += move_path
-                count += 1
             elif (x, y) in track:
                 middle_line += tracker
             else:
@@ -163,6 +155,7 @@ def draw_grid(
         lines.append(top_line + "█")
         lines.append(middle_line)
 
+    # Bottom boundary
     bottom_line = ""
     for x in range(width):
         cell = grid[height - 1][x]
@@ -173,4 +166,3 @@ def draw_grid(
 
     lines.append(bottom_line)
     print(color("\n".join(lines)))
-    return count

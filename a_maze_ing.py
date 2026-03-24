@@ -14,10 +14,12 @@ try:
     from gen import MazeGenerator
     from intro import intro
     from output_maze import save_output_file
+    from ft_draw import Cell
 except ModuleNotFoundError:
     print("Warning: Required dependency not found.")
     print("Use this to fix: make install")
     sys.exit(1)
+
 
 def validate_config(
     width: int,
@@ -55,11 +57,11 @@ def main() -> tuple[
     int,
     tuple[int, int],
     tuple[int, int],
-    list[list[object]],
+    list[list[Cell]],
     list[tuple[int, int]],
 ]:
     """Parse config, validate it, generate the maze, and solve it."""
-    width, height, start, end, output_file,perfect , seed = parsing()
+    width, height, start, end, output_file, perfect, seed = parsing()
     validate_config(width, height, start, end)
 
     maze = MazeGenerator(
@@ -83,10 +85,13 @@ def main() -> tuple[
     )
 
     return width, height, start, end, maze.grid, maze.path
+
+
 if __name__ == "__main__":
     try:
         intro()
         os.system("clear")
+
         while True:
             width, height, start, end, grid, path = main()
             result = drawing(width, height, start, end, grid, path)
@@ -95,6 +100,7 @@ if __name__ == "__main__":
                 continue
             if result == "quit":
                 break
+
     except KeyboardInterrupt:
         print("\nGame exited by user.")
         sys.exit(0)

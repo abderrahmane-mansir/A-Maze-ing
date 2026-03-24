@@ -10,6 +10,7 @@ import time
 import threading
 import random
 from typing import List, Tuple, Callable
+from ft_draw import Cell
 
 import pygame
 from blessed import Terminal
@@ -22,27 +23,30 @@ tracker: List[str] = ["  👣 ", "  💨 "]
 move_path: str = "  ⭐ "
 
 pygame.mixer.init()
+
+
 def playsound(sound: str) -> None:
     """Play a sound asynchronously using pygame."""
     try:
         pygame.mixer.Sound(sound).play()
-    except:
+    except Exception:  # Avoid bare except
         pass
 
 
 def start_sound(sound_path: str) -> None:
     """Helper to start a sound in a daemon thread."""
-    threading.Thread(target=playsound, args=(sound_path,), daemon=True).start()
+    threading.Thread(
+        target=playsound, args=(sound_path,), daemon=True
+    ).start()
 
 
 def safe_read(path: str) -> str:
     """Read a file safely and return a default value on failure."""
-    with open(path) as file:
+    with open(path, encoding="utf-8") as file:
         return file.read()
-    
 
 
-def cells_of_42_from_grid(grid: list[list[object]]) -> List[Tuple[int, int]]:
+def cells_of_42_from_grid(grid: List[List[Cell]]) -> List[Tuple[int, int]]:
     """
     Return coordinates of cells reserved for the visible 42 pattern.
 
@@ -64,7 +68,7 @@ def cells_of_42_from_grid(grid: list[list[object]]) -> List[Tuple[int, int]]:
 
 
 def can_move(
-    grid: list[list[object]],
+    grid: list[list[Cell]],
     width: int,
     height: int,
     x: int,
@@ -139,7 +143,7 @@ def spawn_random_bomb(
 
 def draw_minimap(
     term: Terminal,
-    grid: list[list[object]],
+    grid: list[list[Cell]],
     player: tuple[int, int],
     end: tuple[int, int],
     track_set: set[tuple[int, int]],
@@ -185,7 +189,7 @@ def animate_solver(
     term: Terminal,
     width: int,
     height: int,
-    grid: list[list[object]],
+    grid: list[list[Cell]],
     player: tuple[int, int],
     end: tuple[int, int],
     color: Callable[[str], str],
@@ -198,7 +202,7 @@ def animate_solver(
     count_move: int,
     bombs: set[tuple[int, int]],
     health_text: str,
-    show_minimap: bool
+    show_minimap: bool,
 ) -> None:
     """Animate the shortest path step by step."""
     shown_path: list[tuple[int, int]] = []
@@ -252,13 +256,13 @@ def animate_solver(
         time.sleep(0.08)
         start_sound("./sound/pop.mp3")
 
-i: int = 0
+
 def drawing(
     width: int,
     height: int,
     player: tuple[int, int],
     end: tuple[int, int],
-    grid: list[list[object]],
+    grid: list[list[Cell]],
     path: list[tuple[int, int]],
 ) -> str | None:
     """
@@ -299,8 +303,6 @@ def drawing(
     menu_text: str = safe_read(
         "./files_txt/key_maping.txt"
     )
-
-    
     with term.fullscreen(), term.cbreak(), term.hidden_cursor():
         while True:
             os.system("clear")
@@ -344,7 +346,10 @@ def drawing(
             print(
                 term.move_yx(height * 2 + 2, 0)
                 + term.white(
-                    f"health: {health_count}/3 | mini map: {'on' if show_minimap else 'off'} | bomb mode: {'on' if dynamic_mode else 'off'} | bombs: {len(bombs)}"
+                    f"health: {health_count}/3 | mini map: "
+                    f"{'on' if show_minimap else 'off'} | "
+                    f"bomb mode: {'on' if dynamic_mode else 'off'} |"
+                    f" bombs: {len(bombs)}"
                 ),
                 flush=True,
             )
@@ -422,7 +427,8 @@ def drawing(
                         menu_text=menu_text,
                         count_move=count_move,
                         bombs=bombs,
-                        health_text=f"health: {health_count}/3 | bombs: {len(bombs)}",
+                        health_text=f"health: {health_count}/3 |"
+                        f" bombs: {len(bombs)}",
                         show_minimap=show_minimap
                     )
                     start_sound("./sound/victory.mp3")

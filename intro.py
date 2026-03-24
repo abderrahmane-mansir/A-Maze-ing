@@ -1,15 +1,17 @@
 import os
-from blessed import Terminal
-import pygame
 import time
 import threading
+from blessed import Terminal
+import pygame
 from banner import banner
 
 
 def safe_read(path: str) -> str:
     """Read a file safely and return a default value on failure."""
-    with open(path) as file:
+    with open(path, encoding="utf-8") as file:
         return file.read()
+
+
 def playsound(sound: str) -> None:
     """Play a sound asynchronously using pygame."""
     try:
@@ -23,9 +25,13 @@ def playsound(sound: str) -> None:
 
 def start_sound(sound_path: str) -> None:
     """Helper to start a sound in a daemon thread."""
-    threading.Thread(target=playsound, args=(sound_path,), daemon=True).start()
+    threading.Thread(
+        target=playsound, args=(sound_path,), daemon=True
+    ).start()
+
 
 def intro() -> None:
+    """Display the intro sequence with animated text, sounds, and banner."""
     term: Terminal = Terminal()
     with term.fullscreen(), term.cbreak(), term.hidden_cursor():
         os.system("clear")
@@ -41,8 +47,10 @@ def intro() -> None:
                 print(term.white(intro_text.strip()))
                 time.sleep(delay)
                 os.system("clear")
+
         banner()
         os.system("clear")
+
         loading_text = safe_read("./files_txt/loading.txt")
         if loading_text:
             for line in loading_text.splitlines():
@@ -51,12 +59,13 @@ def intro() -> None:
         start_sound("./sound/gta-san-andreas.mp3")
 
         for i in range(18):
-            print(term.move_yx(8, i * 3) + term.green("▆▆▆"), end="", flush=True)
+            print(term.move_yx(8, i * 3) + term.green("▆▆▆"),
+                  end="", flush=True)
             time.sleep(0.13)
 
         os.system("clear")
-        enter_text: str = safe_read("./files_txt/enter.txt").strip()
 
+        enter_text: str = safe_read("./files_txt/enter.txt").strip()
         while True:
             key = term.inkey(timeout=0.1)
             if key and key.name == "KEY_ENTER":

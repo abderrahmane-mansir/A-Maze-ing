@@ -1,11 +1,12 @@
 """
-Helpers to export the maze in the subject's required output format.
+Helpers to export the maze in the required output format.
 """
 
 from typing import List, Tuple
+from ft_draw import Cell
 
 
-def cell_to_hex(cell: object) -> str:
+def cell_to_hex(cell: Cell) -> str:
     """
     Convert one maze cell to a single hexadecimal digit.
 
@@ -32,7 +33,7 @@ def cell_to_hex(cell: object) -> str:
     return format(value, "X")
 
 
-def grid_to_lines(grid: List[List[object]]) -> List[str]:
+def grid_to_lines(grid: List[List[Cell]]) -> List[str]:
     """Convert the full maze grid to text rows of hexadecimal digits."""
     lines: List[str] = []
 
@@ -72,7 +73,7 @@ def path_to_directions(path: List[Tuple[int, int]]) -> str:
 
 def save_output_file(
     filename: str,
-    grid: List[List[object]],
+    grid: List[List[Cell]],
     entry: Tuple[int, int],
     exit_: Tuple[int, int],
     path: List[Tuple[int, int]],
@@ -90,7 +91,7 @@ def save_output_file(
     maze_lines = grid_to_lines(grid)
     path_string = path_to_directions(path)
 
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf-8") as file:
         for line in maze_lines:
             file.write(line + "\n")
 
