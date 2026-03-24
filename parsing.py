@@ -1,123 +1,174 @@
-from typing import List, Tuple, Callable
+"""
+Configuration parsing and terminal maze rendering helpers.
+"""
+
 import sys
+from typing import Callable
 
-
-def parsing() -> Tuple[int, int, Tuple[int, int], Tuple[int, int]]:
+def parsing() -> tuple[
+    int,
+    int,
+    tuple[int, int],
+    tuple[int, int],
+    str,
+    bool,
+    int | None,
+]:
     """
-    Parse configuration values from the config.txt file.
+    Parse configuration values from a config file.
 
-    Returns:
-        tuple: (width, height, start, end)
-            width (int): grid width
-            height (int): grid height
-            start (Tuple[int, int]): player start coordinates
-            end (Tuple[int, int]): exit coordinates
+    Expected keys:
+    - WIDTH
+    - HEIGHT
+    - ENTRY=x,y
+    - EXIT=x,y
+    - OUTPUT_FILE=filename
+    - PERFECT=True/False
+    - SEED=number (optional)
     """
-    width = 0
-    height = 0
+    if len(sys.argv) != 2:
+        print("Usage: python3 a_maze_ing.py config.txt")
+        raise SystemExit(1)
 
-    with open(sys.argv[1]) as f:
-        i = 0
-        for line in f:
-            key, value = line.split("=", 1)
-            key = key.strip().upper()
-            value = value.strip()
+    width: int | None = None
+    height: int | None = None
+    start: tuple[int, int] | None = None
+    end: tuple[int, int] | None = None
+    output_file: str = "maze.txt"
+    perfect: bool = True
+    seed: int | None = None
 
-            if key == "WIDTH":
-                width = int(value)
-                i += 1
+    try:
+        with open(sys.argv[1], encoding="utf-8") as file:
+            for raw_line in file:
+                line = raw_line.strip()
 
-            elif key == "HEIGHT":
-                height = int(value)
-                i += 1
+                if not line or line.startswith("#"):
+                    continue
 
-            elif key == "ENTRY":
-                x, y = value.split(",")
-                start: Tuple[int, int] = (int(x), int(y))
-                i += 1
+                if "=" not in line:
+                    print(f"Error: invalid config line: {line}")
+                    raise SystemExit(1)
 
-            elif key == "EXIT":
-                x, y = value.split(",")
-                end: Tuple[int, int] = (int(x), int(y))
-                i += 1
+                key, value = line.split("=", 1)
+                key = key.strip().upper()
+                value = value.strip()
 
-        if i > 4:
-            print("invalid argument of config")
-            exit(1)
+                if key == "WIDTH":
+                    width = int(value)
+                elif key == "HEIGHT":
+                    height = int(value)
+                elif key == "ENTRY":
+                    x_str, y_str = value.split(",", 1)
+                    start = (int(x_str), int(y_str))
+                elif key == "EXIT":
+                    x_str, y_str = value.split(",", 1)
+                    end = (int(x_str), int(y_str))
+                elif key == "OUTPUT_FILE":
+                    output_file = value
+                elif key == "PERFECT":
+                    perfect = value.lower() == "true"
+                elif key == "SEED":
+                    seed = int(value)
 
-    return width, height, start, end
+    except FileNotFoundError:
+        print(f"Error: file not found: {sys.argv[1]}")
+        raise SystemExit(1)
+    except ValueError as error:
+        print(f"Error: invalid config value: {error}")
+        raise SystemExit(1)
+    except OSError as error:
+        print(f"Error: cannot read config file: {error}")
+        raise SystemExit(1)
 
+    if width is None or height is None or start is None or end is None:
+        print("Error: missing required config keys")
+        raise SystemExit(1)
 
-def cells_of_42(wd: int, ht: int) -> List[Tuple[int, int]]:
-    """
-    Generate the coordinates that form the '42' shape in the grid center.
-    """
-    cx = wd // 2
-    cy = ht // 2
-
-    cells = [
-        (cx + 2, cy - 2),
-        (cx + 1, cy - 2),
-        (cx + 3, cy - 2),
-        (cx + 3, cy - 1),
-        (cx + 3, cy),
-        (cx + 2, cy),
-        (cx + 1, cy),
-        (cx + 1, cy + 1),
-        (cx + 1, cy + 2),
-        (cx + 2, cy + 2),
-        (cx + 3, cy + 2),
-        (cx - 3, cy - 2),
-        (cx - 3, cy - 1),
-        (cx - 3, cy),
-        (cx - 2, cy),
-        (cx - 1, cy),
-        (cx - 1, cy + 1),
-        (cx - 1, cy + 2),
-    ]
-
-    return [(x, y) for x, y in cells if 0 <= x < wd and 0 <= y < ht]
+    return width, height, start, end, output_file, perfect, seed
 
 
 def draw_grid(
     width: int,
     height: int,
-    player: Tuple[int, int],
-    end: Tuple[int, int],
+    grid: list[list[object]],
+    player: tuple[int, int],
+    end: tuple[int, int],
     color: Callable[[str], str],
     characters: str,
     target: str,
     tracker: str,
-    track: List[Tuple[int, int]],
-) -> None:
-    """
-    Render the game grid in the terminal.
-    """
-
-    lines: List[str] = []
-    cells_42 = cells_of_42(width, height)
+    track: list[tuple[int, int]],
+    path: list[tuple[int, int]],
+    show_path: bool,
+    move_path: str,
+    bombs: set[tuple[int, int]],
+) -> int:
+    """Render the maze grid and return the displayed path length."""
+    lines: list[str] = []
+    cells_42: set[tuple[int, int]] = set()
+    count = 0
 
     for y in range(height):
-        lines.append("█" + "█████" * width)
-
-        middle = ""
         for x in range(width):
+            cell = grid[y][x]
+            if (
+                cell.walls["N"]
+                and cell.walls["E"]
+                and cell.walls["S"]
+                and cell.walls["W"]
+            ):
+                cells_42.add((x, y))
+
+    for y in range(height):
+        top_line = ""
+        middle_line = ""
+
+        for x in range(width):
+            cell = grid[y][x]
+
+            north_closed = cell.walls["N"]
+            east_closed = cell.walls["E"]
+            west_closed = cell.walls["W"]
+
+            top_line += "█"
+            top_line += "█████" if north_closed else "     "
+
+            middle_line += "█" if west_closed else " "
+
             if (x, y) == player:
-                cell = characters
+                middle_line += characters
             elif (x, y) == end:
-                cell = target
+                middle_line += target
             elif (x, y) in cells_42:
-                cell = " 💥 "
+                middle_line += "  💥 "
+            elif (x, y) in bombs:
+                middle_line += "  💣 "
+            elif show_path and (x, y) in path:
+                middle_line += move_path
+                count += 1
             elif (x, y) in track:
-                cell = tracker
+                if track and (x, y) == track[-1]:
+                    middle_line += move_path
+                else:
+                    middle_line += tracker
             else:
-                cell = "    "
+                middle_line += "     "
 
-            middle += "█" + cell
+            if x == width - 1:
+                middle_line += "█" if east_closed else " "
 
-        middle += "█"
-        lines.append(middle)
+        lines.append(top_line + "█")
+        lines.append(middle_line)
 
-    lines.append("█" + "█████" * width)
+    bottom_line = ""
+    for x in range(width):
+        cell = grid[height - 1][x]
+        south_closed = cell.walls["S"]
+        bottom_line += "█"
+        bottom_line += "█████" if south_closed else "     "
+    bottom_line += "█"
 
+    lines.append(bottom_line)
     print(color("\n".join(lines)))
+    return count

@@ -42,11 +42,13 @@ make clean
             |           key maping           |
             |────────────────────────────────|
             |   r    : change color      🎨  |
-            |   g    : generate maze     ⚙️  |
+            |   g    : generate maze     ⚙️   |
             |   s    : show / hide path  🧭  |
             |   p    : player mode       🎮  |
             |   c    : change character  👥  |
-            |   t    : show / hide track 🗺️  |
+            |   t    : show / hide track 🛣️   |
+            |   b    : bomb mode         💣  |
+            |   m    : mini map          🗺️   |
             |   q    : Quit              🚫  |
             └────────────────────────────────┘
 ## 📄 Config File Structure

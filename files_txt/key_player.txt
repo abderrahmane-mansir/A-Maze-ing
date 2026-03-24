@@ -7,6 +7,8 @@
             |   s    : show / hide path  🧭  |
             |   ⬆⬇⬅➡ : move player       🕹️   |
             |   c    : change character  👥  |
-            |   t    : show / hide track 🗺️   |
+            |   t    : show / hide track 🛣️   |
+            |   b    : bomb mode         💣  |
+            |   m    : mini map          🗺️   |
             |   q    : Quit              🚫  |
             └────────────────────────────────┘
