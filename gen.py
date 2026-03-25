@@ -167,14 +167,23 @@ class MazeGenerator:
         return self.seed
 
     def imperfect_maze(self, probability: float = 0.10) -> None:
-        """
-        Open extra walls after generating a perfect maze, to create
-        multiple possible paths while keeping the same base structure.
+        """Randomly open extra walls to make maze imperfect."""
+        for y in range(self.height):
+            for x in range(self.width):
+                if random.random() < probability:
+                    directions = []
+                    if x > 0:
+                        directions.append("W")
+                    if x < self.width - 1:
+                        directions.append("E")
+                    if y > 0:
+                        directions.append("N")
+                    if y < self.height - 1:
+                        directions.append("S")
 
-        The algorithm prefers walls closer to the exit so alternate
-        routes to the exit become more visible.
-        """
-        # keep your current code here
+                    if directions:
+                        direction = random.choice(directions)
+                        self.open_passage(y, x, direction)
 
     def solver(self) -> None:
         """Find the shortest path from entry to exit using BFS."""

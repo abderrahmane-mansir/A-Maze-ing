@@ -93,7 +93,6 @@ if __name__ == "__main__":
         parsing()
         intro()
         os.system("clear")
-
         while True:
             width, height, start, end, grid, path = main()
             result = drawing(width, height, start, end, grid, path)
