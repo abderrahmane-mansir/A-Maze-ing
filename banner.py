@@ -34,11 +34,11 @@ def banner() -> None:
     """
     term = Terminal()
 
-    with open("./files_txt/ascii_art.txt", "r", encoding="utf-8") as f:
+    with open("./files_txt/ascii_art.txt", "r") as f:
         ascii_art = f.read()
-    with open("./files_txt/left_ascii.txt", "r", encoding="utf-8") as f:
+    with open("./files_txt/left_ascii.txt", "r") as f:
         left_ascii = f.read()
-    with open("./files_txt/right_ascii.txt", "r", encoding="utf-8") as f:
+    with open("./files_txt/right_ascii.txt", "r") as f:
         right_ascii = f.read()
 
     max_height = max(
