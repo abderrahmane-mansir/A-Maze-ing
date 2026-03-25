@@ -89,6 +89,8 @@ def main() -> tuple[
 
 if __name__ == "__main__":
     try:
+        os.system("clear")
+        parsing()
         intro()
         os.system("clear")
 

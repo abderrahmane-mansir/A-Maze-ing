@@ -36,8 +36,8 @@ def parsing() -> Tuple[
     height: int | None = None
     start: Tuple[int, int] | None = None
     end: Tuple[int, int] | None = None
-    output_file: str = "maze.txt"
-    perfect: bool = True
+    output_file: str | None = None
+    perfect: bool | None = None
     seed: int | None = None
 
     try:
@@ -85,7 +85,8 @@ def parsing() -> Tuple[
         print(f"Error: cannot read config file: {error}")
         raise SystemExit(1)
 
-    if width is None or height is None or start is None or end is None:
+    if (width is None or height is None or start is None
+            or end is None or output_file is None or perfect is None):
         print("Error: missing required config keys")
         raise SystemExit(1)
 
