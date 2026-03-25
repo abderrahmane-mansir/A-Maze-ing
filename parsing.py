@@ -37,7 +37,7 @@ def parsing() -> Tuple[
     start: Tuple[int, int] | None = None
     end: Tuple[int, int] | None = None
     output_file: str | None = None
-    perfect: bool = True
+    perfect: bool | None = None
     seed: int | None = None
 
     try:
