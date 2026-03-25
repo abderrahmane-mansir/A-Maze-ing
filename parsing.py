@@ -139,7 +139,7 @@ def draw_grid(
             elif (x, y) == end:
                 middle_line += target
             elif (x, y) in cells_42:
-                middle_line += "  💥 "
+                middle_line += "  💻 "
             elif (x, y) in bombs:
                 middle_line += "  💣 "
             elif show_path and (x, y) in path:

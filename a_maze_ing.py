@@ -89,7 +89,6 @@ def main() -> tuple[
 if __name__ == "__main__":
     try:
         os.system("clear")
-        os.system("clear")
 
         while True:
             width, height, start, end, grid, path = main()
