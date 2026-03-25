@@ -72,9 +72,13 @@ def main() -> tuple[
         seed=seed,
     )
 
-    maze.create_grid()
-    maze.generate()
-    maze.solver()
+    try:
+        maze.create_grid()
+        maze.generate()
+        maze.solver()
+    except Exception as error:
+        print(f"Error during maze generation or solving: {error}")
+        sys.exit(1)
     save_output_file(
         filename=output_file,
         grid=maze.grid,
@@ -82,14 +86,15 @@ def main() -> tuple[
         exit_=end,
         path=maze.path,
     )
-    intro()
+
     return width, height, start, end, maze.grid, maze.path
 
 
 if __name__ == "__main__":
     try:
         os.system("clear")
-
+        width, height, start, end, grid, path = main()
+        intro()
         while True:
             width, height, start, end, grid, path = main()
             result = drawing(width, height, start, end, grid, path)
@@ -98,6 +103,8 @@ if __name__ == "__main__":
                 continue
             if result == "quit":
                 break
+            if result == "new_maze":
+                result = drawing(width, height, start, end, grid, path)
 
     except KeyboardInterrupt:
         print("\nGame exited by user.")

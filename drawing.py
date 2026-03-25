@@ -42,7 +42,7 @@ def start_sound(sound_path: str) -> None:
 
 def safe_read(path: str) -> str:
     """Read a file safely and return a default value on failure."""
-    with open(path, encoding="utf-8") as file:
+    with open(path) as file:
         return file.read()
 
 

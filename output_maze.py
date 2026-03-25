@@ -91,7 +91,7 @@ def save_output_file(
     maze_lines = grid_to_lines(grid)
     path_string = path_to_directions(path)
 
-    with open(filename, "w", encoding="utf-8") as file:
+    with open(filename, "w") as file:
         for line in maze_lines:
             file.write(line + "\n")
 

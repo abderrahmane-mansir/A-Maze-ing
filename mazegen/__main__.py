@@ -61,7 +61,7 @@ def main() -> int:
     rendered = maze.to_ascii(path=path)
 
     if args.output:
-        args.output.write_text(rendered + "\n", encoding="utf-8")
+        args.output.write_text(rendered + "\n")
     else:
         print(rendered)
 

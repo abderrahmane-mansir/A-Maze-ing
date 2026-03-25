@@ -41,7 +41,7 @@ def parsing() -> Tuple[
     seed: int | None = None
 
     try:
-        with open(sys.argv[1], encoding="utf-8") as file:
+        with open(sys.argv[1], ding="utf-8") as file:
             for raw_line in file:
                 line = raw_line.strip()
                 if not line or line.startswith("#"):
