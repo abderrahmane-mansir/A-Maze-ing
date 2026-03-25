@@ -286,10 +286,10 @@ def drawing(
     bombs: set[Tuple[int, int]] = set()
 
     colors: List[Callable[[str], str]] = [
-        term.yellow,
+        term.white,
         term.green,
         term.blue,
-        term.magenta,
+        term.red,
     ]
 
     color_index: int = 0

@@ -9,6 +9,57 @@ The goal of the project is to generate a maze dynamically and allow the player t
 
 The maze is displayed in the terminal with a custom visual grid, and the player interacts using keyboard inputs. The project demonstrates algorithmic thinking, real-time terminal rendering, and user interaction.
 
+## 📁 Project Structure
+
+```text
+A-Maze-ing/
+├── a_maze_ing.py
+├── banner.py
+├── config.txt
+├── drawing.py
+├── files_txt/
+│   ├── 1.txt
+│   ├── 2.txt
+│   ├── 3.txt
+│   ├── ascii_art.txt
+│   ├── enter.txt
+│   ├── game_end.txt
+│   ├── game_over.txt
+│   ├── key_maping.txt
+│   ├── key_player.txt
+│   ├── left_ascii.txt
+│   ├── loading.txt
+│   ├── right_ascii.txt
+│   └── win.txt
+├── ft_draw.py
+├── gen.py
+├── .gitignore
+├── intro.py
+├── Makefile
+├── maze.txt
+├── mazegen/
+│   ├── __init__.py
+│   ├── __main__.py
+│   └── core.py
+├── output_maze.py
+├── parsing.py
+├── pyproject.toml
+├── README.md
+├── README_MAZEGEN.md
+└── sound/
+    ├── ack.mp3
+    ├── bomb.mp3
+    ├── correct.mp3
+    ├── duck-toy-sound.mp3
+    ├── gta-san-andreas.mp3
+    ├── ive-got-this-faaaaaaaaahhhhh.mp3
+    ├── oi-oi-oe-oi-a-eye-eye.mp3
+    ├── pop.mp3
+    ├── rizz-sound-effect.mp3
+    ├── spongebob-walking-sound-single.mp3
+    └── victory.mp3
+```
+
 ---
 
 ## ⚙️ Instructions
@@ -37,6 +88,38 @@ make debug
 make clean
 ```
 
+## ♻️ Reusable Package (`mazegen`)
+
+This repository includes a reusable Python package named `mazegen`.
+
+Build from source:
+
+```bash
+python -m pip install --upgrade pip build
+python -m build
+```
+
+Install from generated files:
+
+```bash
+pip install ./mazegen-1.0.0-py3-none-any.whl
+```
+
+or:
+
+```bash
+pip install ./mazegen-1.0.0.tar.gz
+```
+
+Example usage:
+
+```python
+from mazegen import generate_maze
+
+maze = generate_maze(width=20, height=12, seed=42)
+print(maze.to_ascii(path=maze.solve()))
+```
+
 ## 🎮 Controls
             ┌────────────────────────────────┐
             |           key maping           |
@@ -53,7 +136,7 @@ make clean
             └────────────────────────────────┘
 ## 📄 Config File Structure
 The `config.txt` file must follow this format:
-```bash
+```text
 WIDTH=20
 HEIGHT=15
 ENTRY=0,0
@@ -118,24 +201,6 @@ We chose DFS because:
 - It guarantees that there is at least one valid path from entry to exit
 - It produces visually interesting mazes
 - It is efficient and works well with grid-based structures
-
----
-
-## 🔁 Reusable Code
-
-Several parts of the project are reusable:
-
-### 🔹 Maze generation logic
-- Can be reused in other grid-based games or simulations
-
-### 🔹 draw_grid()
-- A generic terminal rendering function that can display any grid-based system
-
-### 🔹 Input handling system
-- Keyboard interaction using `blessed` can be reused in other terminal apps
-
-### 🔹 Config parser
-- The parsing system can be reused for other projects requiring configuration files
 
 ---
 

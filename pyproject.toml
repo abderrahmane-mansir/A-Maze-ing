@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mazegen"
+version = "1.0.0"
+description = "Reusable maze generation and solving utilities"
+readme = "README_MAZEGEN.md"
+requires-python = ">=3.10"
+authors = [
+    {name = "amansir"},
+    {name = "nodoulah"}
+]
+keywords = ["maze", "generation", "dfs", "algorithms"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent"
+]
+
+[project.scripts]
+mazegen = "mazegen.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mazegen*"]
