@@ -118,7 +118,6 @@ def draw_grid(
             cell = grid[y][x]
             if all(cell.walls.values()):
                 cells_42.add((x, y))
-
     for y in range(height):
         top_line = ""
         middle_line = ""

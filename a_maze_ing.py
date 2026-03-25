@@ -63,7 +63,6 @@ def main() -> tuple[
     """Parse config, validate it, generate the maze, and solve it."""
     width, height, start, end, output_file, perfect, seed = parsing()
     validate_config(width, height, start, end)
-
     maze = MazeGenerator(
         width=width,
         height=height,
@@ -83,16 +82,15 @@ def main() -> tuple[
         exit_=end,
         path=maze.path,
     )
-
+    intro()
     return width, height, start, end, maze.grid, maze.path
 
 
 if __name__ == "__main__":
     try:
         os.system("clear")
-        parsing()
-        intro()
         os.system("clear")
+
         while True:
             width, height, start, end, grid, path = main()
             result = drawing(width, height, start, end, grid, path)

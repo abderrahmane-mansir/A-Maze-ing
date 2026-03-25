@@ -106,6 +106,8 @@ class MazeGenerator:
 
         list_42: List[Tuple[int, int]] = self.list_4 + self.list_2
         close_42_cells(self.grid, list_42)
+        if self.enter in list_42 or self.exit in list_42:
+            raise ValueError("Entry or exit inside 42 pattern")
 
         random.seed(self.seed)
         maze = self.grid
